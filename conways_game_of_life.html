@@ -85,6 +85,17 @@
     return grid[r][c];
   }
 
+  // Dylan O'Brien underpopulation rule. Live cell with less than 2 live neighbors dies
+  function underpopulation(r, c){
+    if (grid[r][c]==1){
+      const neighbors = countNeighbors(r, c);
+      if (neighbors<2){
+        return 0;
+      }
+    }
+    return grid[r][c];
+  }
+
   createBoard();
 </script>
 

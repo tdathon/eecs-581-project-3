@@ -58,6 +58,33 @@
     element.classList.toggle("alive");
   }
 
+  // Divit Kannnan, count alive neighbors
+  function countNeighbors(r, c) {
+    let count = 0;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          count += grid[nr][nc];
+        }
+      }
+    }
+    return count;
+  }
+
+  // Divit Kannan, apply overpopulation rule o alive cell die if more than 3 neighbors
+  function overpopulationRule(r, c) {
+    if (grid[r][c] === 1) {
+      const neighbors = countNeighbors(r, c);
+      if (neighbors > 3) {
+        return 0;
+      }
+    }
+    return grid[r][c];
+  }
+
   createBoard();
 </script>
 

@@ -10,3 +10,4 @@ Synopsis: We are creating a simulation of [Conway's Game of Life](https://en.wik
   - Any live cell with two or three live neighbours lives on to the next generation.
   - Any live cell with more than three live neighbours dies, as if by overpopulation.
   - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+<img width="919" height="740" alt="Screenshot 2025-10-26 at 7 30 47 PM" src="https://github.com/user-attachments/assets/0df7801e-c3f2-4633-b688-6a681ecc7a0a" />

@@ -17,5 +17,12 @@ Synopsis: We are creating a simulation of [Conway's Game of Life](https://en.wik
   When a user chooses to advance a generation, our program creates a new grid and applies the rules for cell generation according to the previous state. When this new grid is generated, it will then replace the game board with the new grid. We then update the user interface to present them with the new game board.  <br>
 <img width="1298" height="698" alt="image" src="https://github.com/user-attachments/assets/f11f90e0-0e7b-4a85-ad9d-2a3b576c3b49" />  <br>
 
+Our program has been implemented in a simple html file. It currently generates a 20 by 20 game board, however this can be easily adjusted by editing variables. In the future we plan to add support for:
+- The ability for the user to change the automatic progression speed
+- Adding the ability to go backwards in history, enabling the user to return to previous game states. This will require saving a history of game boards.
+- The ability to immediately clear the board.
+- The ability to randomly generate a board.
+- The ability to save or quickly add patterns to the board
+Note: This list is non-exhaustive, and we may add other features to the game. <br>
 A complete UML Diagram of our program with specific function and class names is as follows:  <br>
 <img width="919" height="740" alt="Screenshot 2025-10-26 at 7 30 47 PM" src="https://github.com/user-attachments/assets/0df7801e-c3f2-4633-b688-6a681ecc7a0a" />  

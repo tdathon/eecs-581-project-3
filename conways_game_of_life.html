@@ -96,6 +96,21 @@
     return grid[r][c];
   }
 
+  // Ted Athon survival rule. a live cell with 2 or 3 live neighbors stays alive
+  function survivalRule(r, c){
+    // check if this cell is currently alive
+    if (grid[r][c] === 1){
+      // count how many live neighbors it has
+      const neighbors = countNeighbors(r, c);
+      // if it has exactly 2 or 3 neighbors, keep it alive for the next generation
+      if (neighbors === 2 || neighbors === 3){
+        return 1; // keep the cell alive
+      }
+    }
+    // otherwise don't change anything here, other rules will handle their cases
+    return grid[r][c];
+  }
+
   createBoard();
 </script>
 

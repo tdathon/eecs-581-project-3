@@ -24,14 +24,22 @@
     text-align: center;
     margin-top: 10px;
   }
+  button {
+    margin: 0 5px;
+    padding: 5px 10px;
+  }
 </style>
 </head>
 <body>
 
 <h2 style="text-align:center;">Conway's Game of Life</h2>
 <div id="board"></div>
+
 <div id="controls">
   <button id="nextBtn">Next Generation</button>
+  <button id="playBtn">Play</button>
+  <button id="pauseBtn">Pause</button>
+</div>
 </div>
 
 <script>
@@ -42,6 +50,7 @@
 
   // 2D array to store state: 0 = dead, 1 = alive
   let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+  let intervalId = null; // for play/pause control
   
   // Create board and add click toggles
   function createBoard() {
@@ -112,8 +121,22 @@
     });
   }
 
-  // Hook up button - Created by Nick Reinig
+  // Control functions - Created by Nick Reinig
+  function play() {
+    if (!intervalId) {
+      intervalId = setInterval(nextGeneration, 300); // runs every 300ms
+    }
+  }
+
+  function pause() {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+
+  // Hook up buttons - Created by Nick Reinig
   document.getElementById("nextBtn").addEventListener("click", nextGeneration);
+  document.getElementById("playBtn").addEventListener("click", play);
+  document.getElementById("pauseBtn").addEventListener("click", pause);
 
   createBoard();
 </script>

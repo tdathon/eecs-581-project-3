@@ -9,7 +9,7 @@ Synopsis: We are creating a simulation of [Conway's Game of Life](https://en.wik
   - Any live cell with fewer than two live neighbours dies, as if by underpopulation.
   - Any live cell with two or three live neighbours lives on to the next generation.
   - Any live cell with more than three live neighbours dies, as if by overpopulation.
-  - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+  - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.  <br>
   These requires each cell to have a relation with its neighboring cells. A cell on the boarder of the grid considers any empty neighboring spots to be dead for the purpose of executing game rules. In future designs we may create an infinite game board, which will require major architectural changes.  <br>
 <img width="668" height="398" alt="image" src="https://github.com/user-attachments/assets/e46f3be6-2b1c-4a6d-88c1-da1c2fd32378" />  <br>
   Conway's game of life does not have an objective or way to win, but instead serves to amuse its user through the natural and deterministic evolution of the game board. The game is deterministic, meaning the same input state will result in the same output state each time.  <br>
@@ -22,7 +22,7 @@ Our program has been implemented in a simple html file. It currently generates a
 - Adding the ability to go backwards in history, enabling the user to return to previous game states. This will require saving a history of game boards.
 - The ability to immediately clear the board.
 - The ability to randomly generate a board.
-- The ability to save or quickly add patterns to the board
+- The ability to save or quickly add patterns to the board  <br>
 Note: This list is non-exhaustive, and we may add other features to the game. <br>
 A complete UML Diagram of our program with specific function and class names is as follows:  <br>
 <img width="919" height="740" alt="Screenshot 2025-10-26 at 7 30 47 PM" src="https://github.com/user-attachments/assets/0df7801e-c3f2-4633-b688-6a681ecc7a0a" />  

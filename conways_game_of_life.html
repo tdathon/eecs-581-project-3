@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <title>Conway's Game of Life</title>
-<!--Alec Slavik, added primative gameboard 10/23-->
 <style>
   #board {
     display: grid;
@@ -21,15 +20,22 @@
   .alive {
     background: black;
   }
+  #controls {
+    text-align: center;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
 
 <h2 style="text-align:center;">Conway's Game of Life</h2>
 <div id="board"></div>
+<div id="controls">
+  <button id="nextBtn">Next Generation</button>
+</div>
 
 <script>
-  // Alec Slavik, simple gameboard that is static 20x20, with alive/dead cells 10/23
+  // Alec Slavik, static 20x20 board
   const rows = 20;
   const cols = 20;
   const board = document.getElementById("board");
@@ -37,7 +43,7 @@
   // 2D array to store state: 0 = dead, 1 = alive
   let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
   
-  // Create board makes board and adds cells that can be alive/dead
+  // Create board and add click toggles
   function createBoard() {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -45,20 +51,18 @@
         cell.classList.add("cell");
         cell.dataset.row = r;
         cell.dataset.col = c;
-        
-        // click for alive/dead
         cell.addEventListener("click", () => toggleCell(r, c, cell));
         board.appendChild(cell);
       }
     }
   }
-// Function to handle alive or dead
+
   function toggleCell(r, c, element) {
     grid[r][c] = grid[r][c] === 0 ? 1 : 0;
     element.classList.toggle("alive");
   }
 
-  // Divit Kannnan, count alive neighbors
+  // Count alive neighbors - Created by Nick Reinig
   function countNeighbors(r, c) {
     let count = 0;
     for (let dr = -1; dr <= 1; dr++) {
@@ -74,42 +78,42 @@
     return count;
   }
 
-  // Divit Kannan, apply overpopulation rule o alive cell die if more than 3 neighbors
-  function overpopulationRule(r, c) {
-    if (grid[r][c] === 1) {
-      const neighbors = countNeighbors(r, c);
-      if (neighbors > 3) {
-        return 0;
+  // Compute next generation - Created by Nick Reinig
+  function nextGeneration() {
+    const newGrid = Array.from({ length: rows }, () => Array(cols).fill(0)); // create new grid that will replace the current grid
+	
+    // Apply rules to new grid based on state of current grid
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const neighbors = countNeighbors(r, c);
+
+        // Conway's rules
+        if (grid[r][c] === 1 && (neighbors === 2 || neighbors === 3)) {
+          newGrid[r][c] = 1; // stays alive -- Created by Ted Athon
+        } else if (grid[r][c] === 0 && neighbors === 3) {
+          newGrid[r][c] = 1; // reproduction -- Created by Amrit Sian
+        } else {
+          newGrid[r][c] = 0; // dies or stays dead -- rules by Dylan O'Brien and Divit Kannan -- Combined into one by Nick Reinig
+        }
       }
     }
-    return grid[r][c];
+	//replace the grid with the new grid, then update the board
+    grid = newGrid;
+    updateBoard();
   }
 
-  // Dylan O'Brien underpopulation rule. Live cell with less than 2 live neighbors dies
-  function underpopulation(r, c){
-    if (grid[r][c]==1){
-      const neighbors = countNeighbors(r, c);
-      if (neighbors<2){
-        return 0;
-      }
-    }
-    return grid[r][c];
+  // Update visuals - Created by Nick Reinig
+  function updateBoard() {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach(cell => {
+      const r = parseInt(cell.dataset.row);
+      const c = parseInt(cell.dataset.col);
+      cell.classList.toggle("alive", grid[r][c] === 1);
+    });
   }
 
-  // Ted Athon survival rule. a live cell with 2 or 3 live neighbors stays alive
-  function survivalRule(r, c){
-    // check if this cell is currently alive
-    if (grid[r][c] === 1){
-      // count how many live neighbors it has
-      const neighbors = countNeighbors(r, c);
-      // if it has exactly 2 or 3 neighbors, keep it alive for the next generation
-      if (neighbors === 2 || neighbors === 3){
-        return 1; // keep the cell alive
-      }
-    }
-    // otherwise don't change anything here, other rules will handle their cases
-    return grid[r][c];
-  }
+  // Hook up button - Created by Nick Reinig
+  document.getElementById("nextBtn").addEventListener("click", nextGeneration);
 
   createBoard();
 </script>

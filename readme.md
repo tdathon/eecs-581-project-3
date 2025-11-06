@@ -3,7 +3,7 @@ https://docs.google.com/document/d/1ktu6v7W4VGS1WUS6DzwEQh84EOM8ldc4CDwcQIPn19I/
 Sprint Artifacts for sprint #1 <br>
 https://docs.google.com/document/d/12w0JTGZzTsQXACyUy-fwbfmHnrJd73mObLPzPbbFayo/edit?usp=sharing <br>
 Sprint Artifacts for sprint #2 <br>
-##GOES HERE<br>
+https://docs.google.com/document/d/1v_AoQVVWPk0A59Biy2BNvgAX2FCL_0APBt6PMajGKg0/edit?usp=sharing <br>
 Sprint Artifacts for sprint #3 - make these before sprint 3<br> 
 Requirements Spreadsheet <br>
 https://docs.google.com/spreadsheets/d/1BlT6FRo8qMe7Gb6nY3kuZY7vsmQTkXKUjCxlGRbKdc4/edit?gid=2138476440#gid=2138476440

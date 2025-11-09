@@ -1,3 +1,10 @@
+<!-- This is Conway's Game of Life, a zero player simulation game. 
+Learn about it at: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+This is a group development effort by Team 9
+
+The object of this game is to mark cells as dead or alive, and then progress through generations as a set of rules dictate the next state of the board.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +28,31 @@
     font-size: 2.5rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     margin-bottom: 30px;
+  }
+
+  /* Stats container above game board */
+  #stats {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    width: max-content;
+    margin: 0 auto 20px auto;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+  }
+
+  #stats div {
+    margin: 0;
+  }
+
+  #stats span {
+    color: #667eea;
+    font-size: 1.1rem;
   }
 	
   /* Alec Slavik: White grid container with shadows and rounded corners */
@@ -108,6 +140,12 @@
 <body>
 
 <h2 style="text-align:center;">Conway's Game of Life</h2>
+
+<div id="stats">
+  <div>Generation: <span id="genCount">0</span></div>
+  <div>Population: <span id="popCount">0</span></div>
+</div>
+
 <div id="board"></div>
 
 <div id="controls">
@@ -115,7 +153,6 @@
   <button id="playBtn">Play</button>
   <button id="pauseBtn">Pause</button>
   <button id="clearBtn">Clear Grid</button>
-</div>
 </div>
 
 <script>
@@ -127,6 +164,7 @@
   // 2D array to store state: 0 = dead, 1 = alive
   let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
   let intervalId = null; // for play/pause control
+  let generation = 0; // track generation count
   
   // Create board and add click toggles
   function createBoard() {
@@ -145,6 +183,7 @@
   function toggleCell(r, c, element) {
     grid[r][c] = grid[r][c] === 0 ? 1 : 0;
     element.classList.toggle("alive");
+    updateStats();
   }
 
   // Count alive neighbors - Created by Nick Reinig
@@ -184,6 +223,7 @@
     }
 	//replace the grid with the new grid, then update the board
     grid = newGrid;
+    generation++; //update generation by Nick Reinig
     updateBoard();
   }
 
@@ -195,6 +235,14 @@
       const c = parseInt(cell.dataset.col);
       cell.classList.toggle("alive", grid[r][c] === 1);
     });
+    updateStats();
+  }
+
+  // Update stats display - Created by Nick Reinig
+  function updateStats() {
+    const population = grid.flat().reduce((sum, cell) => sum + cell, 0);
+    document.getElementById("genCount").textContent = generation;
+    document.getElementById("popCount").textContent = population;
   }
 
   // Control functions - Created by Nick Reinig
@@ -214,6 +262,7 @@
 			grid[r][c]=0;
 		}
 	}
+	generation = 0;
 	updateBoard();
   }
 

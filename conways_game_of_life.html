@@ -125,6 +125,11 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   }
 
+  /* Divit Kannan: reset button gradient (orange/red) */
+  #resetBtn {
+    background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%);
+  }
+
   /* Alec Slavik: Button hover effect */
   button:hover {
     transform: translateY(-2px);
@@ -153,6 +158,20 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   #muteBtn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
+
+  /* speed controls styling */
+  #speedControls {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+  }
+  #speedSlider {
+    width: 220px;
+  }
 </style>
 </head>
 <body>
@@ -171,6 +190,13 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   <button id="playBtn">Play</button>
   <button id="pauseBtn">Pause</button>
   <button id="clearBtn">Clear Grid</button>
+  <button id="resetBtn">Reset</button>
+
+  <div id="speedControls">
+    <label for="speedSlider">Speed</label>
+    <input id="speedSlider" type="range" min="50" max="1000" value="300" step="50" />
+    <span id="speedValue">300ms</span>
+  </div>
 
   <div id="audioControls">
     <label for="volumeSlider">SFX Volume</label>
@@ -187,8 +213,10 @@ The object of this game is to mark cells as dead or alive, and then progress thr
 
   // 2D array to store state: 0 = dead, 1 = alive
   let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+  let initialGrid = Array.from({ length: rows }, () => Array(cols).fill(0)); // store initial state for reset
   let intervalId = null; // for play/pause control
   let generation = 0; // track generation count
+  let simulationSpeed = 300; // default speed in ms
 
   // sound effects added by Ted Athon
   // path to the sound to play when a cell becomes alive
@@ -225,6 +253,23 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     });
   })();
 
+  // ui for speed control - Divit Kannan
+  (function initSpeedControls(){
+    const speedSlider = document.getElementById("speedSlider");
+    const speedValue = document.getElementById("speedValue");
+
+    speedSlider.addEventListener("input", () => {
+      simulationSpeed = Number(speedSlider.value);
+      speedValue.textContent = simulationSpeed + "ms";
+      
+      // if simulation is running, restart with new speed
+      if (intervalId) {
+        pause();
+        play();
+      }
+    });
+  })();
+
   // Create board and add click toggles
   function createBoard() {
     for (let r = 0; r < rows; r++) {
@@ -249,6 +294,12 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     }
 
     updateStats();
+    saveInitialState();
+  }
+
+  //save the current state as initial state - Divit Kannan
+  function saveInitialState() {
+    initialGrid = grid.map(row => [...row]);
   }
 
   // Count alive neighbors - Created by Nick Reinig
@@ -328,7 +379,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   // Control functions - Created by Nick Reinig
   function play() {
     if (!intervalId) {
-      intervalId = setInterval(nextGeneration, 300); // runs every 300ms
+      intervalId = setInterval(nextGeneration, simulationSpeed); // uses current simulation speed
     }
   }
 
@@ -336,6 +387,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     clearInterval(intervalId);
     intervalId = null;
   }
+
   function clearGrid() {
 	for (let r=0; r<rows; r++){
 		for (let c=0; c<cols; c++){
@@ -344,6 +396,14 @@ The object of this game is to mark cells as dead or alive, and then progress thr
 	}
 	generation = 0;
 	updateBoard();
+	saveInitialState();
+  }
+
+  function resetSimulation() {
+    pause();
+    grid = initialGrid.map(row => [...row]);
+    generation = 0;
+    updateBoard();
   }
 
   // Hook up buttons - Created by Nick Reinig
@@ -351,6 +411,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   document.getElementById("playBtn").addEventListener("click", play);
   document.getElementById("pauseBtn").addEventListener("click", pause);
   document.getElementById("clearBtn").addEventListener("click", clearGrid);
+  document.getElementById("resetBtn").addEventListener("click", resetSimulation);
   createBoard();
 </script>
 

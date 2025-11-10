@@ -135,6 +135,24 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   button:active {
     transform: translateY(0);
   }
+
+  /* simple styles for the new audio controls */
+  #audioControls {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+  }
+  #volumeSlider {
+    width: 220px;
+  }
+  /* give the mute button a distinct gradient so it matches the theme */
+  #muteBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
 </style>
 </head>
 <body>
@@ -153,6 +171,12 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   <button id="playBtn">Play</button>
   <button id="pauseBtn">Pause</button>
   <button id="clearBtn">Clear Grid</button>
+
+  <div id="audioControls">
+    <label for="volumeSlider">SFX Volume</label>
+    <input id="volumeSlider" type="range" min="0" max="100" value="100" />
+    <button id="muteBtn" type="button">Mute</button>
+  </div>
 </div>
 
 <script>
@@ -165,7 +189,42 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
   let intervalId = null; // for play/pause control
   let generation = 0; // track generation count
-  
+
+  // sound effects added by Ted Athon
+  // path to the sound to play when a cell becomes alive
+  const SFX_SRC = "sounds/note.mp3";
+
+  let sfxVolume = 1.0;
+  let sfxMuted  = false;
+
+  // helper to play one short sound; called once per birth
+  function playBirthSound() {
+    // create a fresh audio element so overlapping sounds can play together
+    const a = new Audio(SFX_SRC);
+    // set volume based on current slider and mute state
+    a.volume = sfxMuted ? 0 : sfxVolume;
+    // try to play
+    a.play().catch(() => {
+    });
+  }
+
+  // ui for volume and mute
+  (function initAudioControls(){
+    const vol = document.getElementById("volumeSlider");
+    const muteBtn = document.getElementById("muteBtn");
+
+    // when the slider moves, update the volume number
+    vol.addEventListener("input", () => {
+      sfxVolume = Number(vol.value) / 100;
+    });
+
+    // when the mute button is clicked, toggle mute and update the label
+    muteBtn.addEventListener("click", () => {
+      sfxMuted = !sfxMuted;
+      muteBtn.textContent = sfxMuted ? "Unmute" : "Mute";
+    });
+  })();
+
   // Create board and add click toggles
   function createBoard() {
     for (let r = 0; r < rows; r++) {
@@ -183,6 +242,12 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   function toggleCell(r, c, element) {
     grid[r][c] = grid[r][c] === 0 ? 1 : 0;
     element.classList.toggle("alive");
+
+    // play a sound if this click made the cell alive
+    if (grid[r][c] === 1) {
+      playBirthSound();
+    }
+
     updateStats();
   }
 
@@ -205,6 +270,9 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   // Compute next generation - Created by Nick Reinig
   function nextGeneration() {
     const newGrid = Array.from({ length: rows }, () => Array(cols).fill(0)); // create new grid that will replace the current grid
+
+    // collect all cells that are born this step so we can play one sound per birth
+    const births = [];
 	
     // Apply rules to new grid based on state of current grid
     for (let r = 0; r < rows; r++) {
@@ -219,12 +287,24 @@ The object of this game is to mark cells as dead or alive, and then progress thr
         } else {
           newGrid[r][c] = 0; // dies or stays dead -- rules by Dylan O'Brien and Divit Kannan -- Combined into one by Nick Reinig
         }
+
+        if (grid[r][c] === 0 && newGrid[r][c] === 1) {
+          births.push([r, c]);
+        }
       }
     }
+
 	//replace the grid with the new grid, then update the board
     grid = newGrid;
     generation++; //update generation by Nick Reinig
     updateBoard();
+
+    // after the board updates, play one sound per birth
+    if (!sfxMuted && sfxVolume > 0) {
+      for (let i = 0; i < births.length; i++) {
+        playBirthSound();
+      }
+    }
   }
 
   // Update visuals - Created by Nick Reinig

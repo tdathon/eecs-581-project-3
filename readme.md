@@ -6,5 +6,7 @@ Sprint Artifacts for sprint #2 <br>
 https://docs.google.com/document/d/1v_AoQVVWPk0A59Biy2BNvgAX2FCL_0APBt6PMajGKg0/edit?usp=sharing <br>
 Sprint Artifacts for sprint #3 <br> 
 https://docs.google.com/document/d/14dWTtFjWEhgUXlD8yr46eyGln7MhCjWJux3g9XEw63Q/edit?usp=sharing <br>
+Sprint Artifacts for sprint #4 <br> 
+https://docs.google.com/document/d/1zWwmxoNN97QAfU09E3BKs-hDbA8nYV_342eVXbMBAkk/edit?usp=sharing <br>
 Requirements Spreadsheet <br>
 https://docs.google.com/spreadsheets/d/1BlT6FRo8qMe7Gb6nY3kuZY7vsmQTkXKUjCxlGRbKdc4/edit?gid=2138476440#gid=2138476440

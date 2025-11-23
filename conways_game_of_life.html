@@ -154,7 +154,6 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   #volumeSlider {
     width: 220px;
   }
-  /* give the mute button a distinct gradient so it matches the theme */
   #muteBtn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
@@ -171,6 +170,24 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   }
   #speedSlider {
     width: 220px;
+  }
+
+  /* simple styles for the sound selection controls */
+  #soundControls {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  #soundControls label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
   }
 </style>
 </head>
@@ -203,6 +220,31 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     <input id="volumeSlider" type="range" min="0" max="100" value="100" />
     <button id="muteBtn" type="button">Mute</button>
   </div>
+
+  <!-- Ted Athon: sound selection controls -->
+  <div id="soundControls">
+    <span>Sound Effect:</span>
+    <label>
+      <input type="radio" name="sfxChoice" value="yell" checked />
+      Yell
+    </label>
+    <label>
+      <input type="radio" name="sfxChoice" value="fart" />
+      Fart
+    </label>
+    <label>
+      <input type="radio" name="sfxChoice" value="boom" />
+      Boom
+    </label>
+    <label>
+      <input type="radio" name="sfxChoice" value="tone" />
+      Tone
+    </label>
+    <label>
+      <input type="radio" name="sfxChoice" value="explode" />
+      Explode
+    </label>
+  </div>
 </div>
 
 <script>
@@ -219,8 +261,20 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   let simulationSpeed = 300; // default speed in ms
 
   // sound effects added by Ted Athon
-  // path to the sound to play when a cell becomes alive
-  const SFX_SRC = "sounds/note.mp3";
+  // path to the sound to play when a cell becomes alive (default sound)
+  const SFX_SRC = "sounds/yell.mp3";
+
+  // more sounds
+  const SFX_PATHS = {
+    yell: "sounds/yell.mp3",
+    fart: "sounds/fart.mp3",
+    boom: "sounds/boom.mp3",
+    tone: "sounds/tone.mp3",
+    explode: "sounds/explode.mp3"
+  };
+
+  // track which sound file is currently selected for playback
+  let currentSfxSrc = SFX_SRC;
 
   let sfxVolume = 1.0;
   let sfxMuted  = false;
@@ -228,11 +282,12 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   // helper to play one short sound; called once per birth
   function playBirthSound() {
     // create a fresh audio element so overlapping sounds can play together
-    const a = new Audio(SFX_SRC);
+    const a = new Audio(currentSfxSrc);
     // set volume based on current slider and mute state
     a.volume = sfxMuted ? 0 : sfxVolume;
     // try to play
     a.play().catch(() => {
+      // this catch is here so browsers do not complain if audio cannot start
     });
   }
 
@@ -250,6 +305,27 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     muteBtn.addEventListener("click", () => {
       sfxMuted = !sfxMuted;
       muteBtn.textContent = sfxMuted ? "Unmute" : "Mute";
+    });
+  })();
+
+  // Ted Athon: ui for selecting which sound effect file to use
+  (function initSoundSelector() {
+    // grab all radio buttons that belong to the sound effect group
+    const radios = document.querySelectorAll('input[name="sfxChoice"]');
+
+    // add a change listener so when a radio is picked we update the sound path
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        // only react when this radio is actually checked
+        if (radio.checked) {
+          const key = radio.value;
+          // look up the file path for this sound choice
+          const newSrc = SFX_PATHS[key];
+          if (newSrc) {
+            currentSfxSrc = newSrc;
+          }
+        }
+      });
     });
   })();
 

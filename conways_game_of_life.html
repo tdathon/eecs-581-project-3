@@ -195,6 +195,28 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     cursor: pointer;
   }
 
+ /*Shape List Styling. Dylan O'Brien*/
+  #shapeControls {
+    margin: 10px auto 0 auto;
+    width: max-content;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  #shapeSelect {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+  }
+
+
   /*Alec Slavik 11/23: Create all color themes to go through*/
   /* Default theme (purple) */
   body.theme-purple {
@@ -291,6 +313,18 @@ The object of this game is to mark cells as dead or alive, and then progress thr
 
 <div id="board"></div>
 
+<!--Shape List UI. Dylan O'Brien-->
+<div id="shapeControls">
+  <label for="shapeSelect">Shape:</label>
+  <select id="shapeSelect">
+    <option value="none">None (Single Cell)</option>
+    <option value="block">Block (2x2)</option>
+    <option value="blinker">Blinker</option>
+    <option value="glider">Glider</option>
+  </select>
+</div>
+
+
 <div id="controls">
   <!--Alec Slavik 11/23: add theme button-->
   <button id="themeBtn">Theme</button>
@@ -350,6 +384,38 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   let intervalId = null; // for play/pause control
   let generation = 0; // track generation count
   let simulationSpeed = 300; // default speed in ms
+
+  /*Shape definitions and selected shape. Dylan O'Brien*/
+  const SHAPES = {
+    none: {
+      pattern: []
+    },
+    block: {
+      // 2x2 block with the clicked cell as top left
+      pattern: [
+        [0, 0], [0, 1],
+        [1, 0], [1, 1]
+      ]
+    },
+    blinker: {
+      // horizontal line of 3 with clicked cell in the middle
+      pattern: [
+        [0, -1], [0, 0], [0, 1]
+      ]
+    },
+    glider: {
+      // standard glider pattern roughly centered on clicked cell
+      pattern: [
+        [-1, 0],
+        [0, 1],
+        [1, -1], [1, 0], [1, 1]
+      ]
+    }
+  };
+
+ //track shape that is currently selected. Dylan O'Brien
+  let selectedShapeKey = "none";
+
 
   // sound effects added by Ted Athon
   // path to the sound to play when a cell becomes alive (default sound)
@@ -436,6 +502,13 @@ The object of this game is to mark cells as dead or alive, and then progress thr
       }
     });
   })();
+
+/*Shape dropdown listener. Dylan O'Brien*/
+  const shapeSelect = document.getElementById("shapeSelect");
+  shapeSelect.addEventListener("change", () => {
+    selectedShapeKey = shapeSelect.value;
+  });
+
 
   // Create board and add click toggles
   function createBoard() {

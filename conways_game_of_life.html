@@ -58,7 +58,6 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   /* Alec Slavik: White grid container with shadows and rounded corners */
   #board {
     display: grid;
-    grid-template-columns: repeat(20, 24px);
     width: max-content;
     margin: 20px auto;
     background: white;
@@ -70,8 +69,6 @@ The object of this game is to mark cells as dead or alive, and then progress thr
 	
   /* Alec Slavik: Individual cell styling with hover effects */
   .cell {
-    width: 24px;
-    height: 24px;
     background: #f8f9fa;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -110,6 +107,11 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     color: white;
   }
 
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   /* Alec Slavik: Next button gradient (pink/red) */
   #nextBtn {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -135,14 +137,19 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     background: linear-gradient(135deg, #2e51ff 0%, #1700ad 100%);
   }	
 
+  /* Undo/Redo buttons gradient (green/teal) */
+  #undoBtn, #redoBtn {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+
   /* Alec Slavik: Button hover effect */
-  button:hover {
+  button:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   }
 
   /* Alec Slavik: Button active/click effect */
-  button:active {
+  button:active:not(:disabled) {
     transform: translateY(0);
   }
 
@@ -216,6 +223,33 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     font-size: 0.9rem;
   }
 
+  /* Grid size controls styling. Divit Kannan */
+  #gridSizeControls {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  #gridSizeControls input[type="number"] {
+    width: 50px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+  }
+
+  #gridSizeControls button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0 2px;
+  }
 
   /*Alec Slavik 11/23: Create all color themes to go through*/
   /* Default theme (purple) */
@@ -333,6 +367,8 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   <button id="pauseBtn">Pause</button>
   <button id="clearBtn">Clear Grid</button>
   <button id="resetBtn">Reset</button>
+  <button id="undoBtn">Undo</button>
+  <button id="redoBtn">Redo</button>
 
   <div id="speedControls">
     <label for="speedSlider">Speed</label>
@@ -370,12 +406,24 @@ The object of this game is to mark cells as dead or alive, and then progress thr
       Explode
     </label>
   </div>
+
+  <!-- Divit Kannan: Grid Size Controls -->
+  <div id="gridSizeControls">
+    <label for="rowsInput">Rows:</label>
+    <input type="number" id="rowsInput" min="5" max="50" value="20" />
+    <label for="colsInput">Cols:</label>
+    <input type="number" id="colsInput" min="5" max="50" value="20" />
+    <button id="applyGridBtn">Apply Grid Size</button>
+    <button id="preset10Btn">10×10</button>
+    <button id="preset20Btn">20×20</button>
+    <button id="preset30Btn">30×30</button>
+  </div>
 </div>
 
 <script>
   // Alec Slavik, static 20x20 board
-  const rows = 20;
-  const cols = 20;
+  let rows = 20;
+  let cols = 20;
   const board = document.getElementById("board");
 
   // 2D array to store state: 0 = dead, 1 = alive
@@ -384,6 +432,11 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   let intervalId = null; // for play/pause control
   let generation = 0; // track generation count
   let simulationSpeed = 300; // default speed in ms
+
+  // Divit Kannan: Undo/Redo history management
+  let history = [];
+  let historyIndex = -1;
+  const MAX_HISTORY = 50; 
 
   /*Shape definitions and selected shape. Dylan O'Brien*/
   const SHAPES = {
@@ -509,13 +562,74 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     selectedShapeKey = shapeSelect.value;
   });
 
+  // Grid size controls. Divit Kannan
+  function initGridSizeControls() {
+    const rowsInput = document.getElementById("rowsInput");
+    const colsInput = document.getElementById("colsInput");
+    const applyBtn = document.getElementById("applyGridBtn");
+    const preset10Btn = document.getElementById("preset10Btn");
+    const preset20Btn = document.getElementById("preset20Btn");
+    const preset30Btn = document.getElementById("preset30Btn");
+
+    applyBtn.addEventListener("click", () => {
+      const newRows = parseInt(rowsInput.value);
+      const newCols = parseInt(colsInput.value);
+      if (newRows >= 5 && newRows <= 50 && newCols >= 5 && newCols <= 50) {
+        applyGridSize(newRows, newCols);
+      } else {
+        alert("Please enter values between 5 and 50 for both rows and columns.");
+      }
+    });
+
+    preset10Btn.addEventListener("click", () => {
+      rowsInput.value = 10;
+      colsInput.value = 10;
+      applyGridSize(10, 10);
+    });
+
+    preset20Btn.addEventListener("click", () => {
+      rowsInput.value = 20;
+      colsInput.value = 20;
+      applyGridSize(20, 20);
+    });
+
+    preset30Btn.addEventListener("click", () => {
+      rowsInput.value = 30;
+      colsInput.value = 30;
+      applyGridSize(30, 30);
+    });
+  }
+
+  function applyGridSize(newRows, newCols) {
+    pause();
+    rows = newRows;
+    cols = newCols;
+    grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+    initialGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
+    generation = 0;
+    history = [];
+    historyIndex = -1;
+    board.innerHTML = '';
+    const maxCellSize = 24;
+    const minCellSize = 8;
+    const cellSize = Math.max(minCellSize, Math.min(maxCellSize, Math.floor(480 / Math.max(rows, cols))));
+    board.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    const cells = board.querySelectorAll('.cell');
+    document.documentElement.style.setProperty('--cell-size', `${cellSize}px`);
+    createBoard(cellSize);
+    updateStats();
+    updateUndoRedoButtons();
+  }
 
   // Create board and add click toggles
-  function createBoard() {
+  function createBoard(cellSize = 24) {
+    board.innerHTML = '';
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
+        cell.style.width = `${cellSize}px`;
+        cell.style.height = `${cellSize}px`;
         cell.dataset.row = r;
         cell.dataset.col = c;
         cell.addEventListener("click", () => toggleCell(r, c, cell));
@@ -525,12 +639,34 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   }
 
   function toggleCell(r, c, element) {
-    grid[r][c] = grid[r][c] === 0 ? 1 : 0;
-    element.classList.toggle("alive");
-
-    // play a sound if this click made the cell alive
-    if (grid[r][c] === 1) {
-      playBirthSound();
+    saveToHistory();
+    
+    if (selectedShapeKey === "none") {
+      // Single cell toggle
+      grid[r][c] = grid[r][c] === 0 ? 1 : 0;
+      element.classList.toggle("alive");
+      
+      // play a sound if this click made the cell alive 
+      if (grid[r][c] === 1) {
+        playBirthSound();
+      }
+    } else {
+      const shape = SHAPES[selectedShapeKey];
+      if (shape && shape.pattern) {
+        let soundPlayed = false;
+        shape.pattern.forEach(([dr, dc]) => {
+          const nr = r + dr;
+          const nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+            grid[nr][nc] = 1;
+            if (!soundPlayed) {
+              playBirthSound();
+              soundPlayed = true;
+            }
+          }
+        });
+        updateBoard();
+      }
     }
 
     updateStats();
@@ -540,6 +676,56 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   //save the current state as initial state - Divit Kannan
   function saveInitialState() {
     initialGrid = grid.map(row => [...row]);
+  }
+
+  // Undo/Redo functionality - Divit Kannan
+  function saveToHistory() {
+    history = history.slice(0, historyIndex + 1);
+    
+    history.push({
+      grid: grid.map(row => [...row]),
+      generation: generation
+    });
+
+    if (history.length > MAX_HISTORY) {
+      history.shift();
+    } else {
+      historyIndex++;
+    }
+    
+    updateUndoRedoButtons();
+  }
+
+  function undo() {
+    if (historyIndex > 0) {
+      historyIndex--;
+      const state = history[historyIndex];
+      grid = state.grid.map(row => [...row]);
+      generation = state.generation;
+      updateBoard();
+      saveInitialState();
+      updateUndoRedoButtons();
+    }
+  }
+
+  function redo() {
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      const state = history[historyIndex];
+      grid = state.grid.map(row => [...row]);
+      generation = state.generation;
+      updateBoard();
+      saveInitialState();
+      updateUndoRedoButtons();
+    }
+  }
+
+  function updateUndoRedoButtons() {
+    const undoBtn = document.getElementById("undoBtn");
+    const redoBtn = document.getElementById("redoBtn");
+    
+    undoBtn.disabled = historyIndex <= 0;
+    redoBtn.disabled = historyIndex >= history.length - 1;
   }
 
   // Count alive neighbors - Created by Nick Reinig
@@ -629,6 +815,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   }
 
   function clearGrid() {
+	saveToHistory();
 	for (let r=0; r<rows; r++){
 		for (let c=0; c<cols; c++){
 			grid[r][c]=0;
@@ -652,6 +839,8 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   document.getElementById("pauseBtn").addEventListener("click", pause);
   document.getElementById("clearBtn").addEventListener("click", clearGrid);
   document.getElementById("resetBtn").addEventListener("click", resetSimulation);
+  document.getElementById("undoBtn").addEventListener("click", undo);
+  document.getElementById("redoBtn").addEventListener("click", redo);
 
   // Alec Slavik: Theme toggle button 11/23
   const themes = ["theme-purple", "theme-red", "theme-blue", "theme-black"];
@@ -666,7 +855,13 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   themeIndex = (themeIndex + 1) % themes.length;
   document.body.classList.add(themes[themeIndex]);
   });
-  createBoard();
+  
+  initGridSizeControls();
+  
+  const initialCellSize = 24;
+  board.style.gridTemplateColumns = `repeat(${cols}, ${initialCellSize}px)`;
+  createBoard(initialCellSize);
+  updateUndoRedoButtons();
 </script>
 
 </body>

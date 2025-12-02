@@ -71,6 +71,11 @@ Purpose: Gaming, Entertainment
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     gap: 2px;
   }
+
+  /* Divit Kannan: Grid with no gap, grid lines off */
+  #board.no-grid-lines {
+    gap: 0;
+  }
 	
   /* Alec Slavik: Individual cell styling with hover effects */
   .cell {
@@ -145,6 +150,11 @@ Purpose: Gaming, Entertainment
   /* Undo/Redo buttons gradient (green/teal) */
   #undoBtn, #redoBtn {
     background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+
+  /* Divit Kannan: Grid lines toggle button */
+  #gridLinesBtn {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   }
 
   /* Alec Slavik: Button hover effect */
@@ -374,6 +384,7 @@ Purpose: Gaming, Entertainment
   <button id="resetBtn">Reset</button>
   <button id="undoBtn">Undo</button>
   <button id="redoBtn">Redo</button>
+  <button id="gridLinesBtn">Grid Lines: On</button>
 
   <!--Amrit Sian: Random mode HTML-->
   <button id="randomBtn">Randomize</button>
@@ -446,6 +457,7 @@ Purpose: Gaming, Entertainment
   let intervalId = null; // for play/pause control
   let generation = 0; // track generation count
   let simulationSpeed = 300; // default speed in ms
+  let gridLinesEnabled = true; // track grid lines state
 
   // Divit Kannan: Undo/Redo history management
   let history = [];
@@ -757,6 +769,20 @@ Purpose: Gaming, Entertainment
     redoBtn.disabled = historyIndex >= history.length - 1;
   }
 
+  // Grid lines toggle functionality
+  function toggleGridLines() {
+    gridLinesEnabled = !gridLinesEnabled;
+    const gridLinesBtn = document.getElementById("gridLinesBtn");
+    
+    if (gridLinesEnabled) {
+      board.classList.remove("no-grid-lines");
+      gridLinesBtn.textContent = "Grid Lines: On";
+    } else {
+      board.classList.add("no-grid-lines");
+      gridLinesBtn.textContent = "Grid Lines: Off";
+    }
+  }
+
   // Count alive neighbors - Created by Nick Reinig
   function countNeighbors(r, c) {
     let count = 0;
@@ -897,6 +923,7 @@ Purpose: Gaming, Entertainment
   document.getElementById("undoBtn").addEventListener("click", undo);
   document.getElementById("redoBtn").addEventListener("click", redo);
   document.getElementById("randomBtn").addEventListener("click", randomizeGrid);
+  document.getElementById("gridLinesBtn").addEventListener("click", toggleGridLines);
 
   // Alec Slavik: Theme toggle button 11/23
   const themes = ["theme-purple", "theme-red", "theme-blue", "theme-black"];

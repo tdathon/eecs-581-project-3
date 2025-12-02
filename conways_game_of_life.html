@@ -1,8 +1,13 @@
-<!-- This is Conway's Game of Life, a zero player simulation game. 
+<!-- 
+Description: This is Conway's Game of Life, a zero player simulation game. 
 Learn about it at: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
-This is a group development effort by Team 9
 
-The object of this game is to mark cells as dead or alive, and then progress through generations as a set of rules dictate the next state of the board.
+Authors: This is a group development effort by Team 9 (Dylan O'brien, Alec Slavik,
+Ted Athon, Nick Reinig, Amrit Sian, Divit Kannan)
+
+Usage: The object of this game is to mark cells as dead or alive, and then progress through generations as a set of rules dictate the next state of the board.
+
+Purpose: Gaming, Entertainment
 -->
 
 <!DOCTYPE html>
@@ -619,6 +624,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     });
   }
 
+  // Creating a new grid size from the default of 24, changes board, grid, history, reset everything
   function applyGridSize(newRows, newCols) {
     pause();
     rows = newRows;
@@ -657,6 +663,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     }
   }
 
+  // Get user input to turn dead/alive cell, sfx mods inside
   function toggleCell(r, c, element) {
     saveToHistory();
     
@@ -715,6 +722,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     updateUndoRedoButtons();
   }
 
+  // Undo works by removing the most recent input using the history, then setting the board
   function undo() {
     if (historyIndex > 0) {
       historyIndex--;
@@ -726,7 +734,8 @@ The object of this game is to mark cells as dead or alive, and then progress thr
       updateUndoRedoButtons();
     }
   }
-
+	
+  // Go to saved state in the history, send change to grid, update UI
   function redo() {
     if (historyIndex < history.length - 1) {
       historyIndex++;
@@ -739,6 +748,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     }
   }
 
+  // Enables or disables the undo and redo buttons based on previous/future board states in the history.
   function updateUndoRedoButtons() {
     const undoBtn = document.getElementById("undoBtn");
     const redoBtn = document.getElementById("redoBtn");
@@ -783,7 +793,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
         } else {
           newGrid[r][c] = 0; // dies or stays dead -- rules by Dylan O'Brien and Divit Kannan -- Combined into one by Nick Reinig
         }
-
+		// If a grid was dead and now alive, we need to push that change
         if (grid[r][c] === 0 && newGrid[r][c] === 1) {
           births.push([r, c]);
         }
@@ -827,12 +837,14 @@ The object of this game is to mark cells as dead or alive, and then progress thr
       intervalId = setInterval(nextGeneration, simulationSpeed); // uses current simulation speed
     }
   }
-
+	
+  // Pause works by stopping the simulation, and keeping the speed as null
   function pause() {
     clearInterval(intervalId);
     intervalId = null;
   }
 
+  // Clear grid sets all the cells to 0, and resets the counter, updates the board, and saves this blank stage for resetting purposes
   function clearGrid() {
 	saveToHistory();
 	for (let r=0; r<rows; r++){
@@ -867,6 +879,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
     if (wasRunning) play();
   }
 
+  // Reset simulation goes back to the input before hitting start, and pauses the game for a new sim
   function resetSimulation() {
     pause();
     grid = initialGrid.map(row => [...row]);
@@ -899,7 +912,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   });
   
   initGridSizeControls();
-  
+	
   const initialCellSize = 24;
   board.style.gridTemplateColumns = `repeat(${cols}, ${initialCellSize}px)`;
   createBoard(initialCellSize);

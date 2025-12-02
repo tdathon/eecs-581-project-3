@@ -624,6 +624,7 @@ Purpose: Gaming, Entertainment
     });
   }
 
+  // Creating a new grid size from the default of 24, changes board, grid, history, reset everything
   function applyGridSize(newRows, newCols) {
     pause();
     rows = newRows;
@@ -662,6 +663,7 @@ Purpose: Gaming, Entertainment
     }
   }
 
+  // Get user input to turn dead/alive cell, sfx mods inside
   function toggleCell(r, c, element) {
     saveToHistory();
     
@@ -720,6 +722,7 @@ Purpose: Gaming, Entertainment
     updateUndoRedoButtons();
   }
 
+  // Undo works by removing the most recent input using the history, then setting the board
   function undo() {
     if (historyIndex > 0) {
       historyIndex--;
@@ -732,6 +735,7 @@ Purpose: Gaming, Entertainment
     }
   }
 
+  // Go to saved state in the history, send change to grid, update UI
   function redo() {
     if (historyIndex < history.length - 1) {
       historyIndex++;
@@ -744,6 +748,7 @@ Purpose: Gaming, Entertainment
     }
   }
 
+   // Enables or disables the undo and redo buttons based on previous/future board states in the history.
   function updateUndoRedoButtons() {
     const undoBtn = document.getElementById("undoBtn");
     const redoBtn = document.getElementById("redoBtn");
@@ -789,6 +794,7 @@ Purpose: Gaming, Entertainment
           newGrid[r][c] = 0; // dies or stays dead -- rules by Dylan O'Brien and Divit Kannan -- Combined into one by Nick Reinig
         }
 
+        // If a grid was dead and now alive, we need to push that change
         if (grid[r][c] === 0 && newGrid[r][c] === 1) {
           births.push([r, c]);
         }
@@ -833,11 +839,13 @@ Purpose: Gaming, Entertainment
     }
   }
 
+  // Pause works by stopping the simulation, and keeping the speed as null
   function pause() {
     clearInterval(intervalId);
     intervalId = null;
   }
 
+  // Clear grid sets all the cells to 0, and resets the counter, updates the board, and saves this blank stage for resetting purposes
   function clearGrid() {
 	saveToHistory();
 	for (let r=0; r<rows; r++){
@@ -872,6 +880,7 @@ Purpose: Gaming, Entertainment
     if (wasRunning) play();
   }
 
+  // Reset simulation goes back to the input before hitting start, and pauses the game for a new sim
   function resetSimulation() {
     pause();
     grid = initialGrid.map(row => [...row]);

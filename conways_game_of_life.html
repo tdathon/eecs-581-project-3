@@ -370,6 +370,15 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   <button id="undoBtn">Undo</button>
   <button id="redoBtn">Redo</button>
 
+  <!--Amrit Sian: Random mode HTML-->
+  <button id="randomBtn">Randomize</button>
+
+<div id="randomControls">
+  <label for="densitySlider">Density:</label>
+  <input id="densitySlider" type="range" min="0" max="100" value="30">
+  <span id="densityValue">30%</span>
+</div>
+
   <div id="speedControls">
     <label for="speedSlider">Speed</label>
     <input id="speedSlider" type="range" min="50" max="1000" value="300" step="50" />
@@ -553,6 +562,16 @@ The object of this game is to mark cells as dead or alive, and then progress thr
         pause();
         play();
       }
+    });
+  })();
+
+  // Amrit Sian: Density slider for random mode
+  (function initDensityControls() {
+    const densitySlider = document.getElementById("densitySlider");
+    const densityValue = document.getElementById("densityValue");
+
+    densitySlider.addEventListener("input", () => {
+      densityValue.textContent = densitySlider.value + "%";
     });
   })();
 
@@ -826,6 +845,28 @@ The object of this game is to mark cells as dead or alive, and then progress thr
 	saveInitialState();
   }
 
+  // Amrit Sian: Randomize grid function
+  function randomizeGrid() {
+    const wasRunning = intervalId !== null;
+    pause();
+
+    saveToHistory();
+
+    const density = Number(document.getElementById("densitySlider").value) / 100;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        grid[r][c] = Math.random() < density ? 1 : 0;
+      }
+    }
+
+    generation = 0;
+    updateBoard();
+    saveInitialState();
+
+    if (wasRunning) play();
+  }
+
   function resetSimulation() {
     pause();
     grid = initialGrid.map(row => [...row]);
@@ -841,6 +882,7 @@ The object of this game is to mark cells as dead or alive, and then progress thr
   document.getElementById("resetBtn").addEventListener("click", resetSimulation);
   document.getElementById("undoBtn").addEventListener("click", undo);
   document.getElementById("redoBtn").addEventListener("click", redo);
+  document.getElementById("randomBtn").addEventListener("click", randomizeGrid);
 
   // Alec Slavik: Theme toggle button 11/23
   const themes = ["theme-purple", "theme-red", "theme-blue", "theme-black"];

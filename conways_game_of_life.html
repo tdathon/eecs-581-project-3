@@ -157,6 +157,13 @@ Purpose: Gaming, Entertainment
     background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   }
 
+  /* Amrit Sian: Help button gradient (light blue) */
+  #helpBtn {
+  background: linear-gradient(135deg, #9be7ff 0%, #00bfff 100%);
+  color: white;
+}
+
+
   /* Alec Slavik: Button hover effect */
   button:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -384,6 +391,9 @@ Purpose: Gaming, Entertainment
   <button id="resetBtn">Reset</button>
   <button id="undoBtn">Undo</button>
   <button id="redoBtn">Redo</button>
+  <button id="helpBtn">Help</button>
+
+  
   <button id="gridLinesBtn">Grid Lines: On</button>
 
   <!--Amrit Sian: Random mode HTML-->
@@ -924,6 +934,12 @@ Purpose: Gaming, Entertainment
   document.getElementById("redoBtn").addEventListener("click", redo);
   document.getElementById("randomBtn").addEventListener("click", randomizeGrid);
   document.getElementById("gridLinesBtn").addEventListener("click", toggleGridLines);
+
+  // Amrit Sian: Help button to open help.html in a new tab
+  document.getElementById("helpBtn").addEventListener("click", () => {
+  window.open("help.html", "_blank");
+});
+
 
   // Alec Slavik: Theme toggle button 11/23
   const themes = ["theme-purple", "theme-red", "theme-blue", "theme-black"];

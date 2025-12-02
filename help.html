@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Game of Life Help</title>
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 40px;
+    color: white;
+    line-height: 1.6;
+  }
+
+  .container {
+    background: rgba(255,255,255,0.15);
+    padding: 25px 30px;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  h1, h2 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .team {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+
+  a {
+    color: #ffe070;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: #fffaa1;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Conway’s Game of Life – Help & Documentation</h1>
+
+  <div class="team">
+    <p>Created by Team 9:</p>
+    <p>
+      <strong>Nick Reinig</strong> • 
+      <strong>Amrit Sian</strong> • 
+      <strong>Alec Slavik</strong> • 
+      <strong>Dylan O’Brien</strong> • 
+      <strong>Divit Kannan</strong> • 
+      <strong>Ted Athon</strong>
+    </p>
+  </div>
+
+  <h2>What Is the Game of Life?</h2>
+  <p>
+    Conway’s Game of Life is a zero-player simulation created by mathematician John Conway in 1970.  
+    It is a famous example of a <strong>cellular automaton</strong>, where simple rules produce complex and surprising behavior.
+  </p>
+
+  <h2>The Rules of the Game</h2>
+  <p>Each cell on the grid has 8 neighbors. During each generation:</p>
+
+  <ul>
+    <li><strong>Underpopulation:</strong> A live cell with fewer than 2 neighbors dies.</li>
+    <li><strong>Survival:</strong> A live cell with 2 or 3 neighbors stays alive.</li>
+    <li><strong>Overpopulation:</strong> A live cell with more than 3 neighbors dies.</li>
+    <li><strong>Reproduction:</strong> A dead cell with exactly 3 neighbors becomes a live cell.</li>
+  </ul>
+
+  <h2>How to Use This Simulator</h2>
+  <ul>
+    <li>Click cells to toggle them alive or dead.</li>
+    <li>Select a predefined shape (block, blinker, glider) and click the board to place it.</li>
+    <li>Press <strong>Play</strong> to animate the simulation.</li>
+    <li>Use <strong>Next Generation</strong> to manually step forward.</li>
+    <li>Use <strong>Randomize</strong> to fill the grid based on density.</li>
+    <li>Use <strong>Reset</strong> or <strong>Clear</strong> to restart.</li>
+    <li>Change grid size, audio, themes, and speed using the controls.</li>
+  </ul>
+
+  <h2>Learn More</h2>
+  <p>
+    Full Wikipedia article:
+  </p>
+  <p>
+    <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">
+      Conway’s Game of Life – Wikipedia
+    </a>
+  </p>
+
+  <h2>About This Project</h2>
+  <p>
+    This simulation was developed by <strong>Team 9</strong> as part of EECS 581.  
+    The project includes advanced features such as random mode, undo/redo,
+    sound effects, dev mode, shape placement, theme switching, and more.
+  </p>
+
+</div>
+
+</body>
+</html>
